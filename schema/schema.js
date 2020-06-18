@@ -6,25 +6,28 @@ const {
   GraphQLSchema,
   GraphQLID,
   GraphQLInt,
-  GraphQLList
+  GraphQLList,
 } = graphql;
 
-const movies = [
-  { id: "1", name: "Forrest Gump", genre: "Drama", directorId: "1" },
-  { id: "2", name: "1984", genre: "Sci-Fi", directorId: "2" },
-  { id: "3", name: "V for vendetta", genre: "Sci-Fi-Triller", directorId: "3" },
-  { id: "4", name: "Snatch", genre: "Crime-Comedy", directorId: "4" },
-  { id: "5", name: "Reservoir Dogs", genre: "Crime", directorId: "1" },
-  { id: "6", name: "The Hateful Eight", genre: "Crime", directorId: "1" },
-  { id: "7", name: "Lock, Stock and Two Smoking Barrels", genre: "Crime-Comedy", directorId: "4" },
-];
+const Movies = require("../models/movie");
+const Directors = require("../models/director");
 
-const directors = [
-  { id: "1", name: "Robert Lee Zemeckis", age: 68 },
-  { id: "2", name: "Michael Radford", age: 72 },
-  { id: "3", name: "James McTeigue", age: 51 },
-  { id: "4", name: "Guy Ritchie", age: 50 },
-];
+// const movies = [
+//   { id: "1", name: "Forrest Gump", genre: "Drama", directorId: "1" },
+//   { id: "2", name: "1984", genre: "Sci-Fi", directorId: "2" },
+//   { id: "3", name: "V for vendetta", genre: "Sci-Fi-Triller", directorId: "3" },
+//   { id: "4", name: "Snatch", genre: "Crime-Comedy", directorId: "4" },
+//   { id: "5", name: "Reservoir Dogs", genre: "Crime", directorId: "1" },
+//   { id: "6", name: "The Hateful Eight", genre: "Crime", directorId: "1" },
+//   { id: "7", name: "Lock, Stock and Two Smoking Barrels", genre: "Crime-Comedy", directorId: "4" },
+// ];
+
+// const directors = [
+//   { id: "1", name: "Quentin Tarantino", age: 68 },   // 5eeb7a74f37d5c48a05ec973
+//   { id: "2", name: "Michael Radford", age: 72 },     // 5eeb7bcff37d5c48a05f8c4d
+//   { id: "3", name: "James McTeigue", age: 51 },      // 5eeb7ca1f37d5c48a060176c
+//   { id: "4", name: "Guy Ritchie", age: 50 },         // 5eeb7cd6f37d5c48a060357b
+// ];
 
 const MovieType = new GraphQLObjectType({
   name: "Movie",
@@ -33,11 +36,12 @@ const MovieType = new GraphQLObjectType({
     name: { type: GraphQLString },
     genre: { type: GraphQLString },
     director: {
-        type: DirectorType,
-        resolve(parent, args) {
-            return directors.find((director) => director.id === parent.id);
-        }
-    }
+      type: DirectorType,
+      resolve(parent, args) {
+        //return directors.find((director) => director.id === parent.id);
+        return Directors.findById(parent.directorId);
+      },
+    },
   }),
 });
 
@@ -48,11 +52,12 @@ const DirectorType = new GraphQLObjectType({
     name: { type: GraphQLString },
     age: { type: GraphQLInt },
     movies: {
-        type: new GraphQLList(MovieType),
-        resolve(parent, args) {
-            return movies.filter((movie) => movie.directorId === parent.id);
-        }
-    }
+      type: new GraphQLList(MovieType),
+      resolve(parent, args) {
+        //return movies.filter((movie) => movie.directorId === parent.id);
+        return Movies.find({ directorId: parent.id });
+      },
+    },
   }),
 });
 
@@ -63,27 +68,31 @@ const Query = new GraphQLObjectType({
       type: MovieType,
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
-        return movies.find((movie) => movie.id === args.id);
+        //return movies.find((movie) => movie.id === args.id);
+        return Movies.findById(args.id);
       },
     },
     director: {
       type: DirectorType,
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
-        return directors.find((director) => director.id === args.id);
+        //return directors.find((director) => director.id === args.id);
+        return Directors.findById(args.id);
       },
     },
     movies: {
-        type: new GraphQLList(MovieType),
-        resolve(parent, args) {
-            return movies;
-        }
+      type: new GraphQLList(MovieType),
+      resolve(parent, args) {
+        //return movies;
+        return Movies.find({});
+      },
     },
     directors: {
-        type: new GraphQLList(DirectorType),
-        resolve(parent, args) {
-            return directors;
-        }
+      type: new GraphQLList(DirectorType),
+      resolve(parent, args) {
+        //return directors;
+        return Directors.find({});
+      },
     },
   },
 });
