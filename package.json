@@ -1,0 +1,27 @@
+{
+  "name": "graphql-apollo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon server/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zhidunov/GraphQL-Apollo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Zhidunov/GraphQL-Apollo/issues"
+  },
+  "homepage": "https://github.com/Zhidunov/GraphQL-Apollo#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-graphql": "^0.9.0",
+    "graphql": "^15.1.0",
+    "mongoose": "^5.9.19",
+    "nodemon": "^2.0.4"
+  }
+}
